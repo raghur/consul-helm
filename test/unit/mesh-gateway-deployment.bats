@@ -246,14 +246,14 @@ key2: value2' \
 #--------------------------------------------------------------------
 # BootstrapACLs
 
-@test "meshGateway/Deployment: global.BootstrapACLs enabled creates init container and secret" {
+@test "meshGateway/Deployment: global.acls.enabled enabled creates init container and secret" {
   cd `chart_dir`
   local actual=$(helm template \
       -x templates/mesh-gateway-deployment.yaml  \
       --set 'meshGateway.enabled=true' \
       --set 'connectInject.enabled=true' \
       --set 'client.grpc=true' \
-      --set 'global.bootstrapACLs=true' \
+      --set 'global.acls.enabled=true' \
       . | tee /dev/stderr )
   local init_container=$(echo "${actual}" | yq -r '.spec.template.spec.initContainers[1].name' | tee /dev/stderr)
   [ "${init_container}" = "mesh-gateway-acl-init" ]
@@ -442,10 +442,10 @@ key2: value2' \
       --set 'connectInject.enabled=true' \
       --set 'client.grpc=true' \
       --set 'meshGateway.consulServiceName=override' \
-      --set 'global.bootstrapACLs=true' \
+      --set 'global.acls.enabled=true' \
       .
   [ "$status" -eq 1 ]
-  [[ "$output" =~ "if global.bootstrapACLs is true, meshGateway.consulServiceName cannot be set" ]]
+  [[ "$output" =~ "if global.acls.enabled is true, meshGateway.consulServiceName cannot be set" ]]
 }
 
 @test "meshGateway/Deployment: does not fail if consulServiceName is set to mesh-gateway and bootstrapACLs is true" {
@@ -456,7 +456,7 @@ key2: value2' \
       --set 'connectInject.enabled=true' \
       --set 'client.grpc=true' \
       --set 'meshGateway.consulServiceName=mesh-gateway' \
-      --set 'global.bootstrapACLs=true' \
+      --set 'global.acls.enabled=true' \
       . | tee /dev/stderr \
       | yq '.spec.template.spec.containers[0]' | tee /dev/stderr )
 

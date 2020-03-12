@@ -53,7 +53,7 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.connectInject.aclInjectToken.secretName }}
                   key: {{ .Values.connectInject.aclInjectToken.secretKey }}
-            {{- else if .Values.global.bootstrapACLs }}
+            {{- else if (or .Values.global.acls.enabled .Values.global.bootstrapACLs) }}
             - name: CONSUL_HTTP_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -86,7 +86,7 @@ spec:
                 -listen=:8080 \
                 {{- if .Values.connectInject.overrideAuthMethodName }}
                 -acl-auth-method="{{ .Values.connectInject.overrideAuthMethodName }}" \
-                {{- else if .Values.global.bootstrapACLs }}
+                {{- else if (or .Values.global.acls.enabled .Values.global.bootstrapACLs) }}
                 -acl-auth-method="{{ template "consul.fullname" . }}-k8s-auth-method" \
                 {{- end }}
 
@@ -116,7 +116,7 @@ spec:
                 -k8s-namespace-mirroring-prefix={{ .Values.connectInject.consulNamespaces.mirroringK8SPrefix }} \
                 {{- end }}
                 {{- end }}
-                {{- if .Values.global.bootstrapACLs }}
+                {{- if (or .Values.global.acls.enabled .Values.global.bootstrapACLs) }}
                 -consul-cross-namespace-acl-policy=cross-namespace-policy \
                 {{- end }}
                 {{- end }}
@@ -180,7 +180,7 @@ spec:
               path: tls.crt
         {{- end }}
       {{- end }}
-      {{- if and .Values.global.bootstrapACLs .Values.global.enableConsulNamespaces }}
+      {{- if and (or .Values.global.acls.enabled .Values.global.bootstrapACLs) .Values.global.enableConsulNamespaces }}
       initContainers:
       - name: injector-acl-init
         image: {{ .Values.global.imageK8S }}

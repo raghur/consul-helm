@@ -73,11 +73,6 @@ global:
     # encryption key.
     secretKey: ""
 
-  # bootstrapACLs will automatically create and assign ACL tokens within
-  # the Consul cluster. This requires servers to be running inside Kubernetes.
-  # Additionally requires Consul >= 1.4 and consul-k8s >= 0.10.1.
-  bootstrapACLs: false
-
   # Enables TLS encryption across the cluster to verify authenticity of the
   # servers and clients that connect. Note: It is HIGHLY recommended that you also
   # enable Gossip encryption.
@@ -156,8 +151,22 @@ global:
     # This setting must be true in both primary and secondary datacenters.
     enabled: false
 
+  # [DEPRECATED] Use acls.enabled instead. If bootstrapACLs or acls.enabled
+  # is true, ACLs will be enabled.
+  # bootstrapACLs will automatically create and assign ACL tokens within
+  # the Consul cluster. This requires servers to be running inside Kubernetes.
+  # Additionally requires Consul >= 1.4 and consul-k8s >= 0.10.1.
+  bootstrapACLs: false
+
   # Configure ACLs.
   acls:
+
+    # If enabled, the Helm chart will automatically create and assign ACL tokens within
+    # the Consul cluster. This requires servers to be running inside Kubernetes.
+    # Additionally requires Consul >= 1.4 and consul-k8s >= 0.10.1.
+    # If bootstrapACLs (deprecated) or enabled is true, ACLs will be enabled.
+    enabled: false
+
     # If true, an ACL token will be created that can be used in secondary
     # datacenters for replication. This should only be set to true in the
     # primary datacenter since the replication token must be created from that

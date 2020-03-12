@@ -11,32 +11,32 @@ load _helpers
   [ "${actual}" = "false" ]
 }
 
-@test "serverACLInitCleanup/ServiceAccount: enabled with global.bootstrapACLs=true" {
+@test "serverACLInitCleanup/ServiceAccount: enabled with global.acls.enabled=true" {
   cd `chart_dir`
   local actual=$(helm template \
       -x templates/server-acl-init-cleanup-serviceaccount.yaml  \
-      --set 'global.bootstrapACLs=true' \
+      --set 'global.acls.enabled=true' \
       . | tee /dev/stderr |
       yq 'length > 0' | tee /dev/stderr)
   [ "${actual}" = "true" ]
 }
 
-@test "serverACLInitCleanup/ServiceAccount: disabled with server=false and global.bootstrapACLs=true" {
+@test "serverACLInitCleanup/ServiceAccount: disabled with server=false and global.acls.enabled=true" {
   cd `chart_dir`
   local actual=$(helm template \
       -x templates/server-acl-init-cleanup-serviceaccount.yaml  \
-      --set 'global.bootstrapACLs=true' \
+      --set 'global.acls.enabled=true' \
       --set 'server.enabled=false' \
       . | tee /dev/stderr |
       yq 'length > 0' | tee /dev/stderr)
   [ "${actual}" = "false" ]
 }
 
-@test "serverACLInitCleanup/ServiceAccount: enabled with client=false and global.bootstrapACLs=true" {
+@test "serverACLInitCleanup/ServiceAccount: enabled with client=false and global.acls.enabled=true" {
   cd `chart_dir`
   local actual=$(helm template \
       -x templates/server-acl-init-cleanup-serviceaccount.yaml  \
-      --set 'global.bootstrapACLs=true' \
+      --set 'global.acls.enabled=true' \
       --set 'client.enabled=false' \
       . | tee /dev/stderr |
       yq 'length > 0' | tee /dev/stderr)

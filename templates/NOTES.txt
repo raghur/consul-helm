@@ -13,7 +13,7 @@ Your release is named {{ .Release.Name }}. To learn more about the release, try:
   $ helm get {{ .Release.Name }}
 
 
-{{- if (and .Values.global.bootstrapACLs (gt (len .Values.server.extraConfig) 3)) }}
+{{- if (and (or .Values.global.acls.enabled .Values.global.bootstrapACLs) (gt (len .Values.server.extraConfig) 3)) }}
 Warning: Defining server extraConfig potentially disrupts the automatic ACL
          bootstrapping required settings. This may cause future issues if
          there are conflicts.

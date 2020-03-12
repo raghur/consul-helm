@@ -103,7 +103,7 @@ spec:
             secretName: {{ .name }}
             {{- end }}
         {{- end }}
-        {{- if .Values.global.bootstrapACLs }}
+        {{- if (or .Values.global.acls.enabled .Values.global.bootstrapACLs) }}
         - name: aclconfig
           emptyDir: {}
         {{- end }}
@@ -179,7 +179,7 @@ spec:
                 -config-dir=/consul/userconfig/{{ .name }} \
                 {{- end }}
                 {{- end }}
-                {{- if .Values.global.bootstrapACLs}}
+                {{- if (or .Values.global.acls.enabled .Values.global.bootstrapACLs) }}
                 -config-dir=/consul/aclconfig \
                 {{- end }}
                 -datacenter={{ .Values.global.datacenter }} \
@@ -217,7 +217,7 @@ spec:
               readOnly: true
               mountPath: /consul/userconfig/{{ .name }}
             {{- end }}
-            {{- if .Values.global.bootstrapACLs}}
+            {{- if (or .Values.global.acls.enabled .Values.global.bootstrapACLs) }}
             - name: aclconfig
               mountPath: /consul/aclconfig
             {{- end }}
@@ -277,9 +277,9 @@ spec:
           resources:
             {{ tpl .Values.client.resources . | nindent 12 | trim }}
           {{- end }}
-      {{- if (or .Values.global.bootstrapACLs .Values.global.tls.enabled) }}
+      {{- if (or .Values.global.acls.enabled .Values.global.bootstrapACLs .Values.global.tls.enabled) }}
       initContainers:
-      {{- if .Values.global.bootstrapACLs }}
+      {{- if (or .Values.global.acls.enabled .Values.global.bootstrapACLs) }}
       - name: client-acl-init
         image: {{ .Values.global.imageK8S }}
         command:

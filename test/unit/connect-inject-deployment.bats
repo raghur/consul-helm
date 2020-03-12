@@ -327,12 +327,12 @@ load _helpers
   [ "${actual}" = "false" ]
 }
 
-@test "connectInject/Deployment: -acl-auth-method is set when global.bootstrapACLs is true" {
+@test "connectInject/Deployment: -acl-auth-method is set when global.acls.enabled is true" {
   cd `chart_dir`
   local actual=$(helm template \
       -x templates/connect-inject-deployment.yaml  \
       --set 'connectInject.enabled=true' \
-      --set 'global.bootstrapACLs=true' \
+      --set 'global.acls.enabled=true' \
       . | tee /dev/stderr |
       yq '.spec.template.spec.containers[0].command | any(contains("-acl-auth-method=\"release-name-consul-k8s-auth-method\""))' | tee /dev/stderr)
   [ "${actual}" = "true" ]
@@ -349,12 +349,12 @@ load _helpers
   [ "${actual}" = "true" ]
 }
 
-@test "connectInject/Deployment: -acl-auth-method is overridden by connectInject.overrideAuthMethodName if global.bootstrapACLs is true" {
+@test "connectInject/Deployment: -acl-auth-method is overridden by connectInject.overrideAuthMethodName if global.acls.enabled is true" {
   cd `chart_dir`
   local actual=$(helm template \
       -x templates/connect-inject-deployment.yaml  \
       --set 'connectInject.enabled=true' \
-      --set 'global.bootstrapACLs=true' \
+      --set 'global.acls.enabled=true' \
       --set 'connectInject.overrideAuthMethodName=override' \
       . | tee /dev/stderr |
       yq '.spec.template.spec.containers[0].command | any(contains("-acl-auth-method=\"override\""))' | tee /dev/stderr)
@@ -652,15 +652,15 @@ load _helpers
 }
 
 #--------------------------------------------------------------------
-# namespaces + global.bootstrapACLs
+# namespaces + global.acls.enabled
 
-@test "connectInject/Deployment: CONSUL_HTTP_TOKEN env variable created when global.bootstrapACLs=true" {
+@test "connectInject/Deployment: CONSUL_HTTP_TOKEN env variable created when global.acls.enabled=true" {
   cd `chart_dir`
   local object=$(helm template \
       -x templates/connect-inject-deployment.yaml \
       --set 'connectInject.enabled=true' \
       --set 'global.enableConsulNamespaces=true' \
-      --set 'global.bootstrapACLs=true' \
+      --set 'global.acls.enabled=true' \
       . | tee /dev/stderr |
       yq '[.spec.template.spec.containers[0].env[].name] ' | tee /dev/stderr)
 
@@ -673,13 +673,13 @@ load _helpers
   [ "${actual}" = "1" ]
 }
 
-@test "connectInject/Deployment: init container is created when global.bootstrapACLs=true" {
+@test "connectInject/Deployment: init container is created when global.acls.enabled=true" {
   cd `chart_dir`
   local object=$(helm template \
       -x templates/connect-inject-deployment.yaml \
       --set 'connectInject.enabled=true' \
       --set 'global.enableConsulNamespaces=true' \
-      --set 'global.bootstrapACLs=true' \
+      --set 'global.acls.enabled=true' \
       . | tee /dev/stderr |
       yq '.spec.template.spec.initContainers[0]' | tee /dev/stderr)
 
@@ -692,7 +692,7 @@ load _helpers
   [ "${actual}" = "true" ]
 }
 
-@test "connectInject/Deployment: cross namespace policy is not added when global.bootstrapACLs=false" {
+@test "connectInject/Deployment: cross namespace policy is not added when global.acls.enabled=false" {
   cd `chart_dir`
   local actual=$(helm template \
       -x templates/connect-inject-deployment.yaml \
@@ -703,13 +703,13 @@ load _helpers
   [ "${actual}" = "false" ]
 }
 
-@test "connectInject/Deployment: cross namespace policy is added when global.bootstrapACLs=true" {
+@test "connectInject/Deployment: cross namespace policy is added when global.acls.enabled=true" {
   cd `chart_dir`
   local actual=$(helm template \
       -x templates/connect-inject-deployment.yaml \
       --set 'connectInject.enabled=true' \
       --set 'global.enableConsulNamespaces=true' \
-      --set 'global.bootstrapACLs=true' \
+      --set 'global.acls.enabled=true' \
       . | tee /dev/stderr |
       yq '.spec.template.spec.containers[0].command | any(contains("-consul-cross-namespace-acl-policy"))' | tee /dev/stderr)
   [ "${actual}" = "true" ]

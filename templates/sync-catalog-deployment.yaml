@@ -61,7 +61,7 @@ spec:
                   name: {{ .Values.syncCatalog.aclSyncToken.secretName }}
                   key: {{ .Values.syncCatalog.aclSyncToken.secretKey }}
             {{- end }}
-            {{- if .Values.global.bootstrapACLs }}
+            {{- if (or .Values.global.acls.enabled .Values.global.bootstrapACLs) }}
             - name: CONSUL_HTTP_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -141,7 +141,7 @@ spec:
                 -k8s-namespace-mirroring-prefix={{ .Values.syncCatalog.consulNamespaces.mirroringK8SPrefix }} \
                 {{- end }}
                 {{- end }}
-                {{- if .Values.global.bootstrapACLs }}
+                {{- if (or .Values.global.acls.enabled .Values.global.bootstrapACLs) }}
                 -consul-cross-namespace-acl-policy=cross-namespace-policy \
                 {{- end }}
                 {{- end }}
@@ -165,7 +165,7 @@ spec:
             periodSeconds: 5
             successThreshold: 1
             timeoutSeconds: 5
-      {{- if .Values.global.bootstrapACLs }}
+      {{- if (or .Values.global.acls.enabled .Values.global.bootstrapACLs) }}
       initContainers:
       - name: sync-acl-init
         image: {{ .Values.global.imageK8S }}

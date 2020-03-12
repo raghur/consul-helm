@@ -79,7 +79,7 @@ spec:
           volumeMounts:
           - name: consul-bin
             mountPath: /consul-bin
-        {{- if .Values.global.bootstrapACLs }}
+        {{- if (or .Values.global.acls.enabled .Values.global.bootstrapACLs) }}
         # Wait for secret containing acl token to be ready.
         # Doesn't do anything with it but when the main container starts we
         # know that it's been created.
@@ -124,7 +124,7 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
             {{- end }}
-            {{- if .Values.global.bootstrapACLs }}
+            {{- if (or .Values.global.acls.enabled .Values.global.bootstrapACLs) }}
             - name: CONSUL_HTTP_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -162,7 +162,7 @@ spec:
                 -wan-address="${HOST_IP}:{{ .Values.meshGateway.wanAddress.port }}" \
                 {{- end }}
                 {{- if and .Values.meshGateway.consulServiceName }}
-                {{- if and .Values.global.bootstrapACLs (ne .Values.meshGateway.consulServiceName "mesh-gateway") }}{{ fail "if global.bootstrapACLs is true, meshGateway.consulServiceName cannot be set" }}{{ end }}
+                {{- if and (or .Values.global.acls.enabled .Values.global.bootstrapACLs) (ne .Values.meshGateway.consulServiceName "mesh-gateway") }}{{ fail "if global.acls.enabled is true, meshGateway.consulServiceName cannot be set" }}{{ end }}
                 -service={{ .Values.meshGateway.consulServiceName | quote }} \
                 {{- end }}
                 {{- if .Values.global.federation.enabled }}
