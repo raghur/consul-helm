@@ -119,6 +119,9 @@ spec:
 
               exec /bin/consul agent \
                 -advertise="${POD_IP}" \
+                {{- if .Values.server.wanip }}
+                -advertise-wan="{{.Values.server.wanip}}" \
+                {{- end}}
                 -bind=0.0.0.0 \
                 -bootstrap-expect={{ .Values.server.bootstrapExpect }} \
                 {{- if .Values.global.tls.enabled }}

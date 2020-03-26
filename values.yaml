@@ -155,6 +155,7 @@ server:
   image: null
   replicas: 3
   bootstrapExpect: 3 # Should <= replicas count
+  wanip: 52.167.77.94
 
   # enterpriseLicense refers to a Kubernetes secret that you have created that
   # contains your enterprise license. It is required if you are using an
